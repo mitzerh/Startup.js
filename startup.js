@@ -136,7 +136,7 @@
 	};
 	
 	function log(str) {
-		if (console && typeof console.log==="function") { console.log(str); }
+		if (typeof console!=="undefined" && console.log) { console.log(str); }
 	}
 	
 	window._$tartup = window.$tartup = (function(){

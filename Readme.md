@@ -5,7 +5,7 @@ A compact javascript framework to power up small- to large-scale development.
 The MIT License
 ---------------
 
-######Copyright&#169; 2011 Helcon Mabesa
+####Copyright&#169; 2011 Helcon Mabesa
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the &#8220;Software&#8221;), to deal
