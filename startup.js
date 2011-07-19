@@ -1,8 +1,8 @@
 /**
- * $tartup.js v1.0a
+ * $tartup.js - minified v1.0.1a
  * https://github.com/mitzerh/Startup.js
+ * MIT License
  */
-
 (function(){
 	
 	var CONST = {
