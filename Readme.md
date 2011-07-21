@@ -2,6 +2,9 @@ Startup.js
 ----------
 A compact javascript framework to power up small- to large-scale development.
 
+The framework intends to achieve an easy, standardized, and organized way of implementing
+your scripts without any namespace clutter.
+
 The MIT License
 ---------------
 
