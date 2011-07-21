@@ -67,7 +67,7 @@
 	// No reference is created, it is an anonymous function
 	PAGE_Ready(function(){
 	   log("Anonymous Page Ready!");
-	
+		
 		// call custom object namespace
 		$tartup.site.myNamespace.sayHello("Mr. User");
 	});
