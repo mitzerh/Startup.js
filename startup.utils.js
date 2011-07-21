@@ -33,8 +33,7 @@
 	/*	date/time formatting
 		Sample usage:
 			var dateObj = new Date();
-			fox.utils.datetime.format(dateObj,"Today is: ${ddTH} of ${month} ${yr}");
-		
+			$tartup.utils.datetime.format(dateObj,"Today is: ${ddTH} of ${month} ${yr}");
 			- will return string: Today is 9th of December 2009
 	*/
 	
