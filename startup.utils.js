@@ -26,7 +26,7 @@
 	
 	// console log
 	Add("log",function(str){
-		return cLog(str);
+		return log(str);
 	});
 	
 	//utils for date/time items
@@ -118,8 +118,8 @@
 		}
 	});
 	
-	function cLog(str) {
-		if (console && typeof console.log==="function") { console.log(str); }
+	function log(str) {
+		if (window.console && console.log) { console.log(str); }
 	}
 	
 }($tartup || false));
