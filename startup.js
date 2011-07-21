@@ -1,5 +1,5 @@
 /**
- * $tartup.js - minified v1.0.2a
+ * $tartup.js - v1.0.2a
  * https://github.com/mitzerh/Startup.js
  * MIT License
  */
