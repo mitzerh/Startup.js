@@ -29,15 +29,17 @@ You cannot add an anonymous function!
 
 #### Adding a function call
 
-	Add("SomeFunction",function(user){
-	   alert("Hello " + user + "!");
-	});
-
 	// This function will be accessible by calling:
 	// $tartup.site.SomeFunction();
-	
-#### Adding an object
+	Add("SomeFunction",function(user){
+	   alert("Hello " + user + "!");
+	});	
 
+
+#### Adding an object
+	
+	// This object will be accessible:
+	// $tartup.site.SomeObject;
 	Add("SomeObject",{
 	   sayHello: function(user){
 		  user = user || "nobody";
@@ -48,10 +50,6 @@ You cannot add an anonymous function!
 	      alert("Goodbye " + user + "!");
 	   }
 	});
- 
-	// This object will be accessible:
-	// $tartup.site.SomeObject;
-	
 
 
 ### "DOC_Ready" Method
@@ -68,24 +66,24 @@ Notes on execution:
 
 #### Execute anonymous function
 
-	// Executing an anonymous function
+	// No reference is created, it is an anonymous function
 	DOC_Ready(function(){
 	   alert("DOM is Ready!");
 	});
  
-	// No reference is created, it is an anonymous function
- 
-
+	
+	// This function will also be accessible by calling:
+	// $tartup.site.isDOMReady();
 	DOC_Ready("isDOMReady",function(){
 	   alert("DOM is Ready!!!");
 	});
  
-	// This function will also be accessible by calling:
-	// $tartup.site.isDOMReady();
+	
 
 #### Execute objects
 
-	// Executing an object
+	// This object will also be accessible:
+	// $tartup.site.ReadyObject;
 	DOC_Ready("ReadyObject",{
 	   // init function will triggered automatically
 	   // if it is not present, there is no execution done, but the object will still be created
@@ -96,10 +94,6 @@ Notes on execution:
 	      alert("DOM is Ready!!!");
 	   }
 	});
- 
-	// This object will also be accessible:
-	// $tartup.site.ReadyObject;
-	
 
 
 ### "PAGE_Ready" Method
@@ -120,16 +114,16 @@ This ensures execution of intended inline scripts.
 
 ### You can also create your own object namespaces:
 
-	/*** Added Function ***/
+	// This function will be accessible by calling:
+	// $tartup.site.myNamespace.hello();
 	Add("myNamespace.sayHello",function(user){
 	   user = user || "nobody";
 	   alert("hello! " + user);
 	});
 
-	// This function will be accessible by calling:
-	// $tartup.myNamespace.hello();
-	
-	/*** Added Object ***/
+
+	// This object will be accessible:
+	// $tartup.site.myNamespace;
 	Add("myNamespace",{
 	   goodBye: function() {
 	      alert("goodbye son!");
@@ -139,9 +133,7 @@ This ensures execution of intended inline scripts.
 	   }
 	});
 	
-	// This object will be accessible:
-	// $tartup.myNamespace;
-	
+
 And the similar implementation of custom namespaces applies to the other methods.
 
 
