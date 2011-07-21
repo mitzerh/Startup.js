@@ -1,5 +1,5 @@
 /**
- * $tartup.js - minified v1.0.1a
+ * $tartup.js - minified v1.0.2a
  * https://github.com/mitzerh/Startup.js
  * MIT License
  */
@@ -25,7 +25,8 @@
 		constructor = helper.trimStr(constructor);
 		
 		function isReserved(val) {
-			var ret = (CONST.reserved.indexOf(val)>-1) ? true : false;
+			val = val || "";
+			var ret = (val.length > 0) ? (CONST.reserved.indexOf(val)>-1) ? true : false : false;
 			if (ret) { log("[AddConstructor] Error: Reserved word '"+val+"'"); }
 			return ret;
 		}
@@ -98,9 +99,8 @@
 		this.callback = function () {
 			var args = arguments, 
 				constructor = (args.length===1) ? "" : args[0],
-				context = (args.length===1) ? args[0] : args[1];
-
-			var trigger = self.Add(constructor,context), 
+				context = (args.length===1) ? args[0] : args[1],
+				trigger = (constructor.length > 0) ? self.Add(constructor,context) : context,
 				cloned = root.pageReady || function(){};
 				
 			if (typeof trigger==="function") {
@@ -116,7 +116,8 @@
 			var args = arguments, 
 				constructor = (args.length===1) ? "" : args[0],
 				context = (args.length===1) ? args[0] : args[1],
-				trigger = self.Add(constructor,context);
+				trigger = (constructor.length > 0) ? self.Add(constructor,context) : context;
+				
 			if (typeof trigger==="function") {
 				DomReady.ready(function(){ trigger(); });
 			} else if (typeof trigger==="object" && trigger.init) {
