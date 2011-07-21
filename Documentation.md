@@ -25,6 +25,7 @@ Ways of Setting up your functions/objects
 
 ### "Add" Method
 Adding is just simply defining a function or an object that could be called later.
+You cannot add an anonymous function!
 
 #### Adding a function call
 
@@ -129,7 +130,7 @@ This ensures execution of intended inline scripts.
 	// $tartup.myNamespace.hello();
 	
 	/*** Added Object ***/
-	Add("myNamespace"{
+	Add("myNamespace",{
 	   goodBye: function() {
 	      alert("goodbye son!");
 	   },
