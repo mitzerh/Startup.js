@@ -1,149 +1,217 @@
+/* -*- Mode: Javascript++; tab-width: 3; indent-tabs-mode: nil; c-basic-offset: 3 -*- */
 /**
- * $tartup.js - v1.0.2a
+ * $tartup.js - v1.1a
  * https://github.com/mitzerh/Startup.js
  * MIT License
  */
 (function(){
+   
+   var CONST = {
+      reserved: "Add|OnPageReady|OnDocReady"
+   };
 	
-	var CONST = {
-		reserved: "Add|OnPageReady|OnDocReady"
-	};
-	
-	function Startup() {
-		this.pageReady = function() {};
-		this.site = new Site(this);
-		this.utils = new Util(this);
-	}
-	
-	Startup.prototype = {
-		Add: function(constructor,context) {
-			return AddConstructor(this,constructor,context);
-		}
-	};
-	
-	function AddConstructor(parent,constructor,context) {
-		constructor = helper.trimStr(constructor);
+   function Startup() {
+      var self = this;
+      
+      // page ready execution
+      this.pageReady = function() {
+         var stack = self._PRStack || false;
+         if (!helper.isArray(stack)) { return false; }
+         var fn = groupStack(stack);
+         fn(); // execute
+         delete self._PRStack; // delete temp stack
+         CONST.PRExec = true; // executed
+      };
 		
-		function isReserved(val) {
-			val = val || "";
-			var ret = (val.length > 0) ? (CONST.reserved.indexOf(val)>-1) ? true : false : false;
-			if (ret) { log("[AddConstructor] Error: Reserved word '"+val+"'"); }
-			return ret;
-		}
-		
-		// create the new new constructor object
-		if (constructor.indexOf(".")>-1) {
-			// remove initial dot 
-			constructor = (constructor.charAt(0)===".") ? constructor.slice(1,constructor.length) : constructor;
-			var temp = constructor.split("."), len = temp.length, valid = true;
-			for (var x = 0; x < len; x++) {
-				var item = temp[x];
-				if (x===0 && isReserved(item)) { return false; }
-				if (!parent[item]) {
-					if (x!==len-1) {
-						parent[item] = {};
-					} else if (typeof context!=="function") {
-						parent[item] = {};
-					} else {
-						parent[item] = context;
-					}
-				}
-				parent = parent[item];
-			}
-		} else if (constructor.length>0 && !parent[constructor]) {
-			if (isReserved(constructor)) { return false; }
-			if (typeof context!=="function") {
-				parent[constructor] = {};
-				parent = parent[constructor];
-			} else {
-				parent[constructor] = context;
-				parent = parent[constructor];
-			}
-		} else {
-			if (isReserved(constructor)) { return false; }
-			parent = parent[constructor];
-		}
-		
-		if (typeof context==="object" && !helper.isArray(context)) {
-			for (var i in context) {
-				if (parent[i]) { log("[AddConstructor] Warning: Overwriting '"+i+"' "+typeof parent[i]+". (constructor:"+constructor+" )"); }
-				parent[i] = context[i];
-			}
-		}
-		return parent;
-	}
-	
-	
-	/**
-	 * SITE
-	 * Site Object namespace starts here
-	 */
-	function Site(root) {
-		var self = this;
-		this.Add = function (constructor,context) { return AddConstructor(self,constructor,context); };
-		this.OnPageReady = (function(){ var fn = new OnPageReady(self,root); return fn.callback; }()); 
-		this.OnDocReady = (function(){ var fn = new OnDocReady(self,root); return fn.callback; }());
-	}
+      this.site = new Site(this);
+      this.utils = new Util(this);
+   }
+   
+   Startup.prototype = {
+      Add: function(constructor,context) {
+         return AddConstructor(this,constructor,context);
+      }
+   };
+   
+   function AddConstructor(parent,constructor,context) {
+      constructor = helper.trimStr(constructor);
+      
+      function isReserved(val) {
+         val = val || "";
+         var ret = (val.length > 0) ? (CONST.reserved.indexOf(val)>-1) ? true : false : false;
+         if (ret) { log("[AddConstructor] Error: Reserved word '"+val+"'"); }
+         return ret;
+      }
 
+      // create the new new constructor object
+      if (constructor.indexOf(".")>-1) {
+         // remove initial dot 
+         constructor = (constructor.charAt(0)===".") ? constructor.slice(1,constructor.length) : constructor;
+         var temp = constructor.split("."), len = temp.length, valid = true;
+         for (var x = 0; x < len; x++) {
+            var item = temp[x];
+            if (x===0 && isReserved(item)) { return false; }
+            if (!parent[item]) {
+               if (x!==len-1) {
+                  parent[item] = {};
+               } else if (typeof context!=="function") {
+                  parent[item] = {};
+               } else {
+                  parent[item] = context;
+               }
+            }
+            parent = parent[item];
+         }
+      } else if (constructor.length>0 && !parent[constructor]) {
+         if (isReserved(constructor)) { return false; }
+         if (typeof context!=="function") {
+            parent[constructor] = {};
+            parent = parent[constructor];
+         } else {
+            parent[constructor] = context;
+            parent = parent[constructor];
+         }
+      } else {
+         if (isReserved(constructor)) { return false; }
+         parent = parent[constructor];
+      }
+      
+      if (typeof context==="object" && !helper.isArray(context)) {
+         for (var i in context) {
+            if (parent[i]) { log("[AddConstructor] Warning: Overwriting '"+i+"' "+typeof parent[i]+". (constructor:"+constructor+" )"); }
+            parent[i] = context[i];
+         }
+      }
+      return parent;
+   }
+   
+   
+   /**
+    * SITE
+    * Site Object namespace starts here
+    */
+   function Site(root) {
+      var self = this;
+      this.Add = function (constructor,context) { return AddConstructor(self,constructor,context); };
+      this.OnPageReady = (function(){ var fn = new OnPageReady(self,root); return fn.callback; }()); 
+      this.OnDocReady = (function(){ var fn = new OnDocReady(self,root); return fn.callback; }());
+   }
+
+   
+   /**
+    * UTILITIES
+    * Global scoped utilities
+    */
+   function Util(root) {
+      var self = this;
+      this.Add = function (constructor,context) { return AddConstructor(self,constructor,context); };
+   }
+   
+   function OnPageReady(self,root) {
+      this.callback = function () {
+         var args = arguments, 
+            constructor = (args.length===1) ? "" : args[0],
+            context = (args.length===1) ? args[0] : args[1],
+            hasConstructor = (constructor.length > 0) ? true : false,
+            trigger = (hasConstructor) ? self.Add(constructor,context) : context,
+            cloned = root.pageReady || function(){};
+            
+         if (CONST.PRExec) { // if init execution already finished
+            setExec(trigger);
+         } else {
+            if (!root._PRStack) { root._PRStack = []; }
+            root._PRStack.push({ n:(!hasConstructor) ? "GEN" : constructor, t:trigger });
+         }
+      };
+   }
+   
+   function OnDocReady(self,root) {
+      this.callback = function () {
+         var args = arguments, 
+            constructor = (args.length===1) ? "" : args[0],
+            context = (args.length===1) ? args[0] : args[1],
+            hasConstructor = (constructor.length > 0) ? true : false,
+            trigger = (hasConstructor) ? self.Add(constructor,context) : context;
+            
+         if (CONST.DRExec) { // if init execution already finished
+            setExec(trigger);
+         } else {
+            if (!root._DRStack) { root._DRStack = []; }
+            root._DRStack.push({ n:(!hasConstructor) ? "GEN" : constructor, t:trigger});
+
+            if (!CONST.docReadyTriggered) { // set trigger only once
+               CONST.docReadyTriggered = true;
+               DomReady.ready(function(){
+                  var stack = root._DRStack || false;
+                  if (!helper.isArray(stack)) { return false; }
+                  var fn = groupStack(stack);
+                  fn(); // execute
+                  delete root._DRStack; // delete temp stack
+                  CONST.DRExec = true; // executed
+               });
+            }
+         }
+      };
+   }
 	
-	/**
-	 * UTILITIES
-	 * Global scoped utilities
-	 */
-	function Util(root) {
-		var self = this;
-		this.Add = function (constructor,context) { return AddConstructor(self,constructor,context); };
-	}
+   // Execution core
+   function setExec(t,cloned) {
+      cloned = (typeof cloned==="function") ? cloned : false;
+      var fn = function() {};
+      var cloneFn = function() { if (cloned) { cloned(); } };
+      
+      if (typeof t==="function") {
+         fn = function() { cloneFn(); t(); };
+      } else if (t && typeof t.init==="function") {
+         fn = function() { cloneFn(); t.init(); };
+      }
+      // if there is a clone function, means it's coming from pre-execution 
+      // and it has to be returned; else trigger the function
+      if (cloned) { return fn; } else { fn(); }
+   }
 	
-	function OnPageReady(self,root) {
-		this.callback = function () {
-			var args = arguments, 
-				constructor = (args.length===1) ? "" : args[0],
-				context = (args.length===1) ? args[0] : args[1],
-				trigger = (constructor.length > 0) ? self.Add(constructor,context) : context,
-				cloned = root.pageReady || function(){};
-				
-			if (typeof trigger==="function") {
-				root.pageReady = function() { cloned(); trigger(); };
-			} else if (typeof trigger==="object" && trigger.init) {
-				root.pageReady = function() { cloned(); trigger.init(); };
-			}
-		};
-	}
+   // Stacking up executions; executes "general" non-constructor defined functions first
+   // TODO: prioritization
+   function groupStack(stack) {
+      var i = 0, len = stack.length, arr = [], fn = function() {}; // empty
+      var setFn = function(t) {
+         var cloned = fn;
+         fn = setExec(t,cloned);
+      };
+	   
+      while (i <= len) {
+         var item = stack[i];
+         if (item && item.n==="GEN") {
+            arr.push(item);
+            stack.splice(i,1);
+            len = stack.length;
+         } else { i++; }
+      }
+      
+      arr = arr.concat(stack);
+      len = arr.length;
+      for (var x = 0; x < len; x++) { setFn(arr[x].t); }
+      return fn; 
+   }
 	
-	function OnDocReady(self,root) {
-		this.callback = function () {
-			var args = arguments, 
-				constructor = (args.length===1) ? "" : args[0],
-				context = (args.length===1) ? args[0] : args[1],
-				trigger = (constructor.length > 0) ? self.Add(constructor,context) : context;
-				
-			if (typeof trigger==="function") {
-				DomReady.ready(function(){ trigger(); });
-			} else if (typeof trigger==="object" && trigger.init) {
-				DomReady.ready(function(){ trigger.init(); });
-			}
-		};
-	}
+   var helper = {
+      isArray: function(val) {
+         val = val || false;
+         return Object.prototype.toString.call(val) === "[object Array]";
+      },
+      trimStr: function(str) {
+         return (!str) ? "" : str.toString().replace(/^\s+/,"").replace(/\s+$/,"");
+      }
+   };
 	
-	var helper = {
-		isArray: function(val) {
-			val = val || false;
-			return Object.prototype.toString.call(val) === "[object Array]";
-		},
-		trimStr: function(str) {
-			return (!str) ? "" : str.toString().replace(/^\s+/,"").replace(/\s+$/,"");
-		}
-	};
-	
-	function log(str) {
-		if (window.console && console.log) { console.log(str); }
-	}
-	
-	window._$tartup = window.$tartup = (function(){
-		return (new Startup());
-	}());
-	
+   function log(str) {
+      if (window.console && console.log) { console.log(str); }
+   }
+   
+   window._$tartup = window.$tartup = (function(){
+      return (new Startup());
+   }());
+
 }());
 
 // http://code.google.com/p/domready/
