@@ -1,19 +1,20 @@
-Changelog
----------
+Changelogs
+==========
 
-Revisions
-=========
-
-#### 1.1
+v1.1
+----
 - Document Ready/Page Ready Execution update
 
-#### 1.0.2a
+v1.0.2a
+-------
 - Anonymous function fix
 - Updating log function
 
-#### 1.0.1a 
+v1.0.1a 
+-------
 - Updating log function
 - Comment updates
 
-#### 1.0a
+v1.0a
+-----
 - Initial commit (Development "forked" from original non-git repository)
