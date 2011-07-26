@@ -1,6 +1,6 @@
 /* -*- Mode: Javascript++; tab-width: 3; indent-tabs-mode: nil; c-basic-offset: 3 -*- */
 /**
- * $tartup.js - v1.1b
+ * $tartup.js - v1.1
  * https://github.com/mitzerh/Startup.js
  * MIT License
  */
