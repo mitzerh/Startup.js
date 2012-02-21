@@ -1,6 +1,6 @@
 /* -*- Mode: Javascript++; tab-width: 3; indent-tabs-mode: nil; c-basic-offset: 3 -*- */
 /**
- * $tartup.js - v1.1
+ * $tartup.js - v1.2
  * https://github.com/mitzerh/Startup.js
  * MIT License
  */
@@ -71,6 +71,9 @@
             parent[constructor] = context;
             parent = parent[constructor];
          }
+      } else if (parent[constructor]) {
+         log("[AddConstructor] Warning: Constructor already exists (constructor:" + constructor + "). Ignoring another instantiation.");
+         return false;
       } else {
          if (isReserved(constructor)) { return false; }
          parent = parent[constructor];

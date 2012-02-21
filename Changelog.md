@@ -1,6 +1,10 @@
 Changelogs
 ==========
 
+v1.2
+----
+- Warn for already existing function instantiations & do not instantiate.
+
 v1.1
 ----
 - Document Ready/Page Ready Execution update
