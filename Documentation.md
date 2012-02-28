@@ -136,4 +136,22 @@ This ensures execution of intended inline scripts.
 
 And the similar implementation of custom namespaces applies to the other methods.
 
+Other Features
+==============
+
+### Creating multiple instances of $tartup
+You can create new instances by using the newInstance() function:
+
+	// create another instance using a different variable
+	var AnotherStartup = $tartup.newInstance();
+
+
+### Adding utility functions directly to the utils object
+You can use this shortcut function to add to the utils:
+
+	// add a util
+	$tartup.addUtil("someUtil",function(){
+		alert("i'm a util!");
+	});
+
 

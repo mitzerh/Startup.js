@@ -1,4 +1,3 @@
-/* -*- Mode: Javascript++; tab-width: 3; indent-tabs-mode: nil; c-basic-offset: 3 -*- */
 /**
  * $tartup.js - v1.2
  * https://github.com/mitzerh/Startup.js
@@ -25,11 +24,16 @@
 		
       this.site = new Site(this);
       this.utils = new Util(this);
+      
+      // Add utils
+      this.addUtil = function(constructor,context) {
+         self.utils.Add(constructor,context);
+      };
    }
    
    Startup.prototype = {
-      Add: function(constructor,context) {
-         return AddConstructor(this,constructor,context);
+      newInstance: function() {
+         return (new Startup());
       }
    };
    

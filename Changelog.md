@@ -1,6 +1,13 @@
 Changelogs
 ==========
 
+v1.3
+----
+- Removing Add() on root level
+- Adding addUtil() on root - to directly add to utils object
+- Create a new instance of $tartup using newInstance()
+- Updates to the utils sample js file
+
 v1.2
 ----
 - Warn for already existing function instantiations & do not instantiate.
