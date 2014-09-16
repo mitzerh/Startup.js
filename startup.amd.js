@@ -14,6 +14,15 @@ startupAMD = (function(window){
 
     };
 
+    App.prototype.config = function(config) {
+
+        var self = this,
+            vars = this.__vars;
+
+        vars.__config = config || {};
+
+    };
+
     App.prototype.define = function() {
 
         var args = arguments,
@@ -69,6 +78,72 @@ startupAMD = (function(window){
                 self.execute();
             });
 
+        }
+
+    };
+
+    App.prototype.load = function(deps, factory) {
+
+        var self = this,
+            vars = self.__vars,
+            factories = vars.__factories,
+            config = vars.__config;
+
+        deps = deps || [];
+
+        if (typeof factory !== "function") {
+            logError("[startup.amd] invalid factory");
+            return false;
+        }
+
+        for (var x = 0; x < deps.length; x++) {
+            if (factories[deps[x]]) {
+                deps.splice(x, 1);
+            }
+        }
+
+        var loadDependency = function() {
+
+            loadScript(deps[0], function(){
+                deps.shift();
+                if (deps.length > 0) {
+                    loadDependency();
+                } else {
+                    factory();
+                }
+            })
+
+        };
+
+        var loadScript = function(dep, callback) {
+
+            var src = (config.basePath || "") + "/" + dep + ".js",
+                script = document.createElement("script");
+
+            script.async = true;
+            script.src = src;
+            (document.getElementsByTagName("head") || document.getElementsByTagName("body"))[0].appendChild(script);
+
+            var poll = function() {
+
+                if (factories[dep]) {
+                    callback(dep);
+                } else {
+                    setTimeout(function(){
+                        poll();
+                    }, 50);
+                }
+
+            };
+
+            poll();
+
+        };
+
+        if (deps.length > 0) {
+            loadDependency();
+        } else {
+            factory();
         }
 
     };
@@ -282,14 +357,12 @@ startupAMD = (function(window){
     }());
 
     return {
+
         create: function() {
-            var amd = {
-                startup: {
-                    amd: (new App())
-                }
-            };
-            return amd;
+
+            return (new App());
         }
+
     };
 
 }(window));
