@@ -1,3 +1,10 @@
+/**
+* startup-js v1.4.1 | 2014-11-11
+* Startup JS Framework
+* by Helcon Mabesa
+* MIT license http://opensource.org/licenses/MIT
+**/
+
 (function(){
    
     var CONST = {

@@ -33,6 +33,7 @@ module.exports = function(grunt) {
                     process: function (content, srcpath) {
                         
                         content = content.replace('${version}', conf.version);
+                        content = [comment, content].join('\n\n');
 
                         return content;
 
