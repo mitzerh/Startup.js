@@ -7,7 +7,7 @@
     function Startup() {
         var self = this;
 
-        this.version = "1.4.0";
+        this.version = "1.4.1";
       
         // page ready execution
         this.pageReady = function() {
