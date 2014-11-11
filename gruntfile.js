@@ -8,7 +8,7 @@ module.exports = function(grunt) {
         conf.name + ' v' + conf.version + ' | ' + grunt.template.today("yyyy-mm-dd"),
         conf.description,
         'by ' + conf.author,
-        conf.license,
+        conf.license
     ].join('\n* ') + '\n**/';
 
     var config = {
@@ -16,7 +16,32 @@ module.exports = function(grunt) {
         pkg: grunt.file.readJSON('package.json'),
 
         clean: {
-            'dest': 'js/*'
+
+            'dest': 'js/*',
+
+            'temp': 'src/*.tmp'
+
+        },
+
+        copy: {
+
+            dist: {
+
+                src: 'src/startup.js',
+                dest: 'src/startup.js.tmp',
+                options: {
+                    process: function (content, srcpath) {
+                        
+                        content = content.replace('${version}', conf.version);
+
+                        return content;
+
+                    }
+
+                }
+
+            }
+            
         },
 
         concat: {
@@ -24,7 +49,7 @@ module.exports = function(grunt) {
             dist: {
                 
                 files: {
-                    'js/startup.js': ['src/startup.js', 'src/domready.js']
+                    'js/startup.js': ['src/startup.js.tmp', 'src/domready.js']
                 }
                 
 
@@ -38,7 +63,7 @@ module.exports = function(grunt) {
 
                 options: grunt.file.readJSON('.jshintrc'),
                 expand: true,
-                src: ['src/startup*.js']
+                src: ['src/startup.js.tmp']
 
             }
 
@@ -65,7 +90,7 @@ module.exports = function(grunt) {
     // load npm's
     require("matchdep").filterDev("grunt-*").forEach(grunt.loadNpmTasks);
 
-    grunt.registerTask('default', ['clean', 'jshint', 'concat', 'uglify']);
+    grunt.registerTask('default', ['clean:dest', 'copy:dist', 'jshint', 'concat', 'clean:temp', 'uglify']);
 
     grunt.initConfig(config);
 

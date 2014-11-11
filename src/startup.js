@@ -1,8 +1,3 @@
-/**
- * $tartup.js - v1.3
- * https://github.com/mitzerh/Startup.js
- * MIT License
- */
 (function(){
    
     var CONST = {
@@ -11,6 +6,8 @@
     
     function Startup() {
         var self = this;
+
+        this.version = "${version}";
       
         // page ready execution
         this.pageReady = function() {
