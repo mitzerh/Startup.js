@@ -1,0 +1,9 @@
+{
+    "name": "Startup",
+    "version": "1.4.1",
+    "main": "js/startup.js",
+    "ignore": [
+        "**/*",
+        "!js/startup.js"
+    ]
+}
