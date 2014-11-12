@@ -33,6 +33,12 @@ module.exports = function(grunt) {
                     process: function (content, srcpath) {
                         
                         content = content.replace('${version}', conf.version);
+
+                        content = content.replace('\/\/inclue:${domready}', (function(){
+                            var ret = grunt.file.read(__dirname + '/src/domready.js');
+                            return ret;
+                        }()));
+
                         content = [comment, content].join('\n\n');
 
                         return content;
@@ -50,7 +56,8 @@ module.exports = function(grunt) {
             dist: {
                 
                 files: {
-                    'js/startup.js': ['src/startup.js.tmp', 'src/domready.js']
+                    //'js/startup.js': ['src/startup.js.tmp', 'src/domready.js']
+                    'js/startup.js': ['src/startup.js.tmp']
                 }
                 
 
@@ -64,7 +71,7 @@ module.exports = function(grunt) {
 
                 options: grunt.file.readJSON('.jshintrc'),
                 expand: true,
-                src: ['src/startup.js.tmp']
+                src: ['src/startup.js']
 
             }
 
@@ -91,7 +98,7 @@ module.exports = function(grunt) {
     // load npm's
     require("matchdep").filterDev("grunt-*").forEach(grunt.loadNpmTasks);
 
-    grunt.registerTask('default', ['clean:dest', 'copy:dist', 'jshint', 'concat', 'clean:temp', 'uglify']);
+    grunt.registerTask('default', ['clean:dest', 'jshint', 'copy:dist', 'concat', 'clean:temp', 'uglify']);
 
     grunt.initConfig(config);
 
