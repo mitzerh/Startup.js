@@ -35,7 +35,7 @@ module.exports = function(grunt) {
                         content = content.replace('${version}', conf.version);
 
                         content = content.replace('\/\/inclue:${domready}', (function(){
-                            var ret = grunt.file.read(__dirname + '/src/domready.js');
+                            var ret = grunt.file.read(__dirname + '/src/domready.tmp');
                             return ret;
                         }()));
 
@@ -79,7 +79,7 @@ module.exports = function(grunt) {
 
         uglify: {
 
-            original: {
+            dist: {
 
                 options: {
                     mangle: true,
@@ -87,6 +87,17 @@ module.exports = function(grunt) {
                 },
                 files: {
                     'js/startup.min.js' : 'js/startup.js'
+                }
+
+            },
+
+            domready: {
+
+                option: {
+                    mangle: true
+                },
+                files: {
+                    'src/domready.tmp': 'src/domready.js'
                 }
 
             }
@@ -98,7 +109,7 @@ module.exports = function(grunt) {
     // load npm's
     require("matchdep").filterDev("grunt-*").forEach(grunt.loadNpmTasks);
 
-    grunt.registerTask('default', ['clean:dest', 'jshint', 'copy:dist', 'concat', 'clean:temp', 'uglify']);
+    grunt.registerTask('default', ['clean:dest', 'uglify:domready', 'jshint', 'copy:dist', 'concat', 'clean:temp', 'uglify:dist']);
 
     grunt.initConfig(config);
 

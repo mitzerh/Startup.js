@@ -1,4 +1,56 @@
 /** lint:ignore **/
 
-// http://code.google.com/p/domready/
-(function(){function e(){if(!d&&(d=!0,c)){for(var a=0;a<c.length;a++)c[a].call(window,[]);c=[]}}function j(a){var g=window.onload;window.onload=typeof window.onload!="function"?a:function(){g&&g();a()}}function h(){if(!i){i=!0;document.addEventListener&&!f.opera&&document.addEventListener("DOMContentLoaded",e,!1);f.msie&&window==top&&function(){if(!d){try{document.documentElement.doScroll("left")}catch(a){setTimeout(arguments.callee,0);return}e()}}();f.opera&&document.addEventListener("DOMContentLoaded", function(){if(!d){for(var a=0;a<document.styleSheets.length;a++)if(document.styleSheets[a].disabled){setTimeout(arguments.callee,0);return}e()}},!1);if(f.safari){var a;(function(){if(!d)if(document.readyState!="loaded"&&document.readyState!="complete")setTimeout(arguments.callee,0);else{if(a===void 0){for(var b=document.getElementsByTagName("link"),c=0;c<b.length;c++)b[c].getAttribute("rel")=="stylesheet"&&a++;b=document.getElementsByTagName("style");a+=b.length}document.styleSheets.length!=a?setTimeout(arguments.callee, 0):e()}})()}j(e)}}var k=window.DomReady={},b=navigator.userAgent.toLowerCase(),f={version:(b.match(/.+(?:rv|it|ra|ie)[\/: ]([\d.]+)/)||[])[1],safari:/webkit/.test(b),opera:/opera/.test(b),msie:/msie/.test(b)&&!/opera/.test(b),mozilla:/mozilla/.test(b)&&!/(compatible|webkit)/.test(b)},i=!1,d=!1,c=[];k.ready=function(a){h();d?a.call(window,[]):c.push(function(){return a.call(window,[])})};h()})();
+/*!
+  * domready (c) Dustin Diaz 2012 - License MIT
+  * v0.3.0
+  */
+
+var domready = (function(definition){
+
+    var fns = [], fn, f = false
+        , doc = document
+        , testEl = doc.documentElement
+        , hack = testEl.doScroll
+        , domContentLoaded = 'DOMContentLoaded'
+        , addEventListener = 'addEventListener'
+        , onreadystatechange = 'onreadystatechange'
+        , readyState = 'readyState'
+        , loadedRgx = hack ? /^loaded|^c/ : /^loaded|c/
+        , loaded = loadedRgx.test(doc[readyState])
+
+      function flush(f) {
+        loaded = 1
+        while (f = fns.shift()) f()
+      }
+
+      doc[addEventListener] && doc[addEventListener](domContentLoaded, fn = function () {
+        doc.removeEventListener(domContentLoaded, fn, f)
+        flush()
+      }, f)
+
+
+      hack && doc.attachEvent(onreadystatechange, fn = function () {
+        if (/^c/.test(doc[readyState])) {
+          doc.detachEvent(onreadystatechange, fn)
+          flush()
+        }
+      })
+
+      return (ready = hack ?
+        function (fn) {
+          self != top ?
+            loaded ? fn() : fns.push(fn) :
+            function () {
+              try {
+                testEl.doScroll('left')
+              } catch (e) {
+                return setTimeout(function() { ready(fn) }, 50)
+              }
+              fn()
+            }()
+        } :
+        function (fn) {
+          loaded ? fn() : fns.push(fn)
+        })
+
+}())
