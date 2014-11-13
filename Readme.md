@@ -155,13 +155,13 @@ Examples
 If you need to define multiple instances of Startup, the `.newInstance()` function will return a new unique instance
 
     // create an instance
-    var MyInstance = new $tartup.newInstance();
+    var MyInstance = $tartup.newInstance();
     
     MyInstance.module("foo", function(){
         console.log("my foo instance");
     });
     
-    var AnotherInstance = new $tartup.newInstance();
+    var AnotherInstance = $tartup.newInstance();
     
     AnotherInstance.module("foo", function(){
         console.log("another foo instance");
@@ -177,6 +177,18 @@ If you need to define multiple instances of Startup, the `.newInstance()` functi
     
     MyInstance.call("foo"); // --> returns "my foo instance"
     AnotherInstance.call("foo"); // --> returns "another foo instance"
+
+**Setting default type on new instance**
+    
+    // this instance's default execution type on 'window' instead of 'page'
+    var SomeInstance = $tartup.newInstance({
+        defaultType: "window"
+    });
+    
+    // default exection on window.onload
+    SomeInstance.module("foo.window", function(){
+        console.log("default on window.onload event");
+    });
 
 
 Credit

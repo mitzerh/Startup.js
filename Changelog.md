@@ -1,6 +1,9 @@
 Changelogs
 ==========
 
+###v2.1.1###
+- pass default type to instance constructor
+
 ###v2.1.0###
 - instance constructor
 - explicit .module() call

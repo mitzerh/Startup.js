@@ -30,21 +30,25 @@
             DOC_EXEC_STACK = [];
         
 
-        var Startup = function() {
+        var Startup = function(config) {
+
+            config = config || {};
 
             // version
             this.version = "${version}";
 
-            // instance stack
-            var DEFINE_STACK = {};
+                // instance stack
+            var DEFINE_STACK = {},
+                // default type
+                DEFAULT_TYPE = (config.defaultType && isType(config.defaultType)) ? config.defaultType : CONST.types[0];
 
             var Proto = this;
 
             /**
              * create a new separate instance
              */
-            Proto.newInstance = function() {
-                var instance = new Startup();
+            Proto.newInstance = function(config) {
+                var instance = new Startup(config);
                 // remove from instanced startups
                 delete instance.newInstance;
                 delete instance.pageReady;
@@ -90,7 +94,7 @@
                     context = args.context; // module context
 
                 // always set a type
-                conf.type = (conf.type && isType(conf.type)) ? conf.type : { type: CONST.types[0] };
+                conf.type = (conf.type && isType(conf.type)) ? conf.type : DEFAULT_TYPE;
 
                 // do not define multiple modules
                 if (DEFINE_STACK[name]) {
