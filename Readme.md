@@ -14,9 +14,9 @@ What's new:
 
 Including Startup
 ------------------
-The Startup file can be included wherever you'd like it to be.
-Whether in your markup. Following best practices, it should be in your
-`<head>` or at the bottom before your closing `</body>` tag.
+The Startup file can be included wherever you'd like it to be in your markup.
+Following best practices, it should be in your `<head>` or at the bottom
+before your closing `</body>` tag.
 
 
 Your control code
