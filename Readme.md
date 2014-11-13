@@ -48,7 +48,7 @@ It's very easy to set up:
 **name** (optional)
 
 - module name
-- must be unique -- dupes will be ignored (a console.log will you know)
+- must be unique -- dupes will be ignored (a console.log will let you know)
 - if not defined (anonymous modules), it will not be stored and cannot be accessed with `.call()` or `.get()`
 
 **type** (optional)
