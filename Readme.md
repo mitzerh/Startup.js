@@ -2,7 +2,7 @@ Startup.js
 ==========
 A simple and lightweight framework script for modular development. Aims to standardize and organize development patterns and avoid namespace clutter.
 
-#version 2 (v2.0.0)!#
+#version 2.x.x!#
 
 What's new:
 
