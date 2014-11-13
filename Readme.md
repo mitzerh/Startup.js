@@ -12,7 +12,7 @@ What's new:
 - $tartup.get() to get already defined modules
 - $tartup.pageReady() not required!
 
-Including $startup
+Including Startup
 ------------------
 The Startup file can be included wherever you'd like it to be.
 Whether in your markup. Following best practices, it should be in your
