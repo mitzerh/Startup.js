@@ -1,6 +1,11 @@
 Changelogs
 ==========
 
+###v2.1.0###
+- instance constructor
+- explicit .module() call
+- add "noexec" type - does not execute on module declaration
+
 ###v2.0.0###
 
 - complete overhaul

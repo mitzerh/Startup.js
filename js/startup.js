@@ -1,5 +1,5 @@
 /**
-* startup-js v2.0.0 | 2014-11-12
+* startup-js v2.1.0 | 2014-11-13
 * Startup JS Framework
 * by Helcon Mabesa
 * MIT license http://opensource.org/licenses/MIT
@@ -24,119 +24,139 @@
 
         var CONST = {
             prefix: "[$tartup]",
-            types: ["page", "window", "document"] // type default: page
+            types: ["page", "window", "document", "noexec"] // type default: page
         };
 
             // booleans
         var DOM_READY = false,
             WINDOW_READY = false,
             PAGE_READY = false,
-            // stacks
-            DEFINE_STACK = {},
+            // execution stack
             PAGE_EXEC_STACK = [],
             WIN_EXEC_STACK = [],
             DOC_EXEC_STACK = [];
         
 
         var Startup = function() {
-            return (new Proto.define(processArgs(arguments)));
-        };
 
-        var Proto = Startup.prototype;
+            // version
+            this.version = "2.1.0";
 
-        Startup.version = "2.0.0";
+            // instance stack
+            var DEFINE_STACK = {};
 
-        /**
-         * inline execution
-         */
-        Startup.pageReady = function() {
-            PAGE_READY = true;
-            executeStack(PAGE_EXEC_STACK);
-        };
+            var Proto = this;
 
-        /**
-         * get defined module
-         */
-        Startup.get = function(name) {
-            return (DEFINE_STACK[name]) ? DEFINE_STACK[name].context : null;
-        };
+            /**
+             * create a new separate instance
+             */
+            Proto.newInstance = function() {
+                var instance = new Startup();
+                // remove from instanced startups
+                delete instance.newInstance;
+                delete instance.pageReady;
 
-        /**
-         * run an already defined module
-         */
-        Startup.call = function(name) {
-            if (DEFINE_STACK[name]) {
-                executeStack([DEFINE_STACK[name]]);
-            }
-        };
+                return instance;
+            };
 
-        /**
-         * module definition
-         */
-        Proto.define = function(args) {
+            /**
+             * inline execution
+             */
+            Proto.pageReady = function() {
+                PAGE_READY = true;
+                executeStack(PAGE_EXEC_STACK);
+            };
 
-            // if there are no arguments, ignore
-            if (!args) { return false; }
+            /**
+             * get defined module
+             */
+            Proto.get = function(name) {
+                return (DEFINE_STACK[name]) ? DEFINE_STACK[name].context : null;
+            };
 
-            var name = args.name, // module name
-                conf = (args.conf && isObject(args.conf)) ? args.conf : {}, // config
-                context = args.context; // module context
+            /**
+             * run an already defined module
+             */
+            Proto.call = function(name) {
+                if (DEFINE_STACK[name]) {
+                    executeStack([DEFINE_STACK[name]]);
+                }
+            };
 
-            // always set a type
-            conf.type = (conf.type && isType(conf.type)) ? conf.type : { type: CONST.types[0] };
+            /**
+             * module definition
+             */
+            Proto.module = function() {
+                var args = processArgs(arguments);
 
-            // do not define multiple modules
-            if (DEFINE_STACK[name]) {
-                log("module '"+name+"' already exists. Ignoring:");
-                log(context);
-                return false;
-            }
+                // if there are no arguments, ignore
+                if (!args) { return false; }
 
-            // store non-anonymous modules
-            if (name !== "_anonymous") {
-                DEFINE_STACK[name] = {
+                var name = args.name, // module name
+                    conf = (args.conf && isObject(args.conf)) ? args.conf : {}, // config
+                    context = args.context; // module context
+
+                // always set a type
+                conf.type = (conf.type && isType(conf.type)) ? conf.type : { type: CONST.types[0] };
+
+                // do not define multiple modules
+                if (DEFINE_STACK[name]) {
+                    log("module '"+name+"' already exists. Ignoring:");
+                    log(context);
+                    return false;
+                }
+
+                // store non-anonymous modules
+                if (name !== "_anonymous") {
+                    DEFINE_STACK[name] = {
+                        conf: conf,
+                        context: context
+                    };
+                }
+
+                // normalize module properties
+                var stack = {
+                    name: name,
                     conf: conf,
                     context: context
                 };
-            }
 
-            // normalize module properties
-            var stack = {
-                name: name,
-                conf: conf,
-                context: context
+                // push to stack
+                switch (conf.type) {
+
+                    case "document":
+                        if (DOM_READY) { // if type is ready, execute at once
+                            executeStack([stack]);
+                        } else {
+                            DOC_EXEC_STACK.push(stack);
+                        }
+                        break;
+
+                    case "window":
+                        if (WINDOW_READY) {
+                            executeStack([stack]);
+                        } else {
+                            WIN_EXEC_STACK.push(stack);
+                        }
+                        break;
+
+                    case "noexec":
+                        // do not execute
+                        break;
+
+                    default:
+                        if (PAGE_READY) {
+                            executeStack([stack]);
+                        } else {
+                            PAGE_EXEC_STACK.push(stack);
+                        }
+                }
+
             };
-
-            // push to stack
-            // if type is ready, execute at once
-            switch (conf.type) {
-
-                case "document":
-                    if (DOM_READY) {
-                        executeStack([stack]);
-                    } else {
-                        DOC_EXEC_STACK.push(stack);
-                    }
-                    break;
-
-                case "window":
-                    if (WINDOW_READY) {
-                        executeStack([stack]);
-                    } else {
-                        WIN_EXEC_STACK.push(stack);
-                    }
-                    break;
-
-                default:
-                    if (PAGE_READY) {
-                        executeStack([stack]);
-                    } else {
-                        PAGE_EXEC_STACK.push(stack);
-                    }
-            }
-
+            
         };
 
+        // execute doc.ready stack
         var executeDocStack = function() {
             DOM_READY = true;
             if (!PAGE_READY) {
@@ -146,6 +166,7 @@
             executeStack(DOC_EXEC_STACK);
         };
 
+        // execute window.onload stack
         var executeWinStack = function() {
             WINDOW_READY = true;
             executeStack(WIN_EXEC_STACK);
@@ -179,6 +200,7 @@
             }
         }
 
+        // stack execution
         function executeStack(STACK) {
             while (STACK.length > 0) {
                 var instance = STACK.shift(),
@@ -192,6 +214,7 @@
             }
         }
 
+        // arguments processor
         function processArgs(args) {
             var name = trimStr(args[0]),
                 conf = null,
@@ -223,6 +246,7 @@
             };
         }
 
+        // validate type
         function isType(val) {
             var ret = false;
             if (typeof val === "string") {
@@ -236,11 +260,6 @@
             return ret;
         }
 
-        function throwError(str) {
-            var foo = (new Error(str));
-        }
-
-        // logger
         function log() {
             var args = arguments;
             if (typeof args[0] === "string") {
@@ -269,7 +288,7 @@
             return (typeof str !== "string") ? "" : (str.toString().replace(/^\s+/,"").replace(/\s+$/,""));
         }
 
-        return Startup;
+        return (new Startup);
 
     }(
         (function(){
